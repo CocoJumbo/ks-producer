@@ -1,0 +1,52 @@
+basePath: /
+definitions:
+  api.SimpleMessage:
+    properties:
+      data:
+        example: hello kafka
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: Go Kafka producer with Gin
+  title: Kafka Producer API
+  version: "1.0"
+paths:
+  /simple-messages:
+    post:
+      consumes:
+      - application/json
+      description: Send a message to simple Kafka topic
+      parameters:
+      - description: Message payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.SimpleMessage'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Send simple message
+      tags:
+      - messages
+swagger: "2.0"
