@@ -1,30 +1,26 @@
-basePath: /
 definitions:
-  api.SimpleMessage:
+  models.SimpleMessage:
     properties:
       data:
-        example: hello kafka
+        type: string
+      id:
         type: string
     type: object
-host: localhost:8081
 info:
   contact: {}
-  description: Go Kafka producer with Gin
-  title: Kafka Producer API
-  version: "1.0"
 paths:
   /simple-messages:
     post:
       consumes:
       - application/json
-      description: Send a message to simple Kafka topic
+      description: Send message to simple Kafka topic
       parameters:
       - description: Message payload
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/api.SimpleMessage'
+          $ref: '#/definitions/models.SimpleMessage'
       produces:
       - application/json
       responses:

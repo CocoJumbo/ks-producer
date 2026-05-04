@@ -8,11 +8,16 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-type Producer struct {
+type Producer interface {
+	Produce(topic string, key, value []byte) error
+	Close() error
+}
+
+type KafkaProducer struct {
 	writer *kafka.Writer
 }
 
-func NewProducer(broker string) *Producer {
+func NewProducer(broker string) *KafkaProducer {
 	writer := &kafka.Writer{
 		Addr: kafka.TCP(broker),
 		//Topic:    "orders",      // default topic (can override per message)
@@ -24,10 +29,10 @@ func NewProducer(broker string) *Producer {
 		WriteTimeout: 5 * time.Second,
 	}
 
-	return &Producer{writer: writer}
+	return &KafkaProducer{writer: writer}
 }
 
-func (p *Producer) Produce(topic string, key, value []byte) error {
+func (p *KafkaProducer) Produce(topic string, key, value []byte) error {
 	msg := kafka.Message{
 		Topic: topic,
 		Key:   key,
@@ -45,6 +50,6 @@ func (p *Producer) Produce(topic string, key, value []byte) error {
 	return nil
 }
 
-func (p *Producer) Close() error {
+func (p *KafkaProducer) Close() error {
 	return p.writer.Close()
 }

@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/simple-messages": {
             "post": {
-                "description": "Send a simple message to Kafka topic",
+                "description": "Send message to simple Kafka topic",
                 "consumes": [
                     "application/json"
                 ],
@@ -35,7 +35,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.SimpleMessage"
+                            "$ref": "#/definitions/models.SimpleMessage"
                         }
                     }
                 ],
@@ -72,12 +72,14 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "api.SimpleMessage": {
+        "models.SimpleMessage": {
             "type": "object",
             "properties": {
                 "data": {
-                    "type": "string",
-                    "example": "hello kafka"
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
                 }
             }
         }
@@ -86,12 +88,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
-	Host:             "localhost:8081",
-	BasePath:         "/",
+	Version:          "",
+	Host:             "",
+	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Kafka Producer API",
-	Description:      "Go Kafka producer with Gin",
+	Title:            "",
+	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

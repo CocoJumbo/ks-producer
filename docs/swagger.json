@@ -1,17 +1,12 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Go Kafka producer with Gin",
-        "title": "Kafka Producer API",
-        "contact": {},
-        "version": "1.0"
+        "contact": {}
     },
-    "host": "localhost:8081",
-    "basePath": "/",
     "paths": {
         "/simple-messages": {
             "post": {
-                "description": "Send a simple message to Kafka topic",
+                "description": "Send message to simple Kafka topic",
                 "consumes": [
                     "application/json"
                 ],
@@ -29,7 +24,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.SimpleMessage"
+                            "$ref": "#/definitions/models.SimpleMessage"
                         }
                     }
                 ],
@@ -66,12 +61,14 @@
         }
     },
     "definitions": {
-        "api.SimpleMessage": {
+        "models.SimpleMessage": {
             "type": "object",
             "properties": {
                 "data": {
-                    "type": "string",
-                    "example": "hello kafka"
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
                 }
             }
         }
