@@ -17,16 +17,16 @@ type KafkaProducer struct {
 	writer *kafka.Writer
 }
 
-func NewProducer(broker string) *KafkaProducer {
+func DefaultProducer(broker string, useHash bool) *KafkaProducer {
 	writer := &kafka.Writer{
-		Addr: kafka.TCP(broker),
-		//Topic:    "orders",      // default topic (can override per message)
-		Balancer: &kafka.Hash{}, // ensures same key → same partition
-
-		RequiredAcks: kafka.RequireAll, // durability
-		Async:        false,            // sync writes (simpler for learning)
-
+		Addr:         kafka.TCP(broker),
+		RequiredAcks: kafka.RequireAll,
+		Async:        false,
 		WriteTimeout: 5 * time.Second,
+	}
+
+	if useHash {
+		writer.Balancer = &kafka.Hash{}
 	}
 
 	return &KafkaProducer{writer: writer}

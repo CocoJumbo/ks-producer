@@ -18,18 +18,22 @@ import (
 func main() {
 	cfg := config.Load()
 
-	producer := kafka.NewProducer(cfg.KafkaBootstrap)
-	defer producer.Close()
+	defaultBalancerProducer := kafka.DefaultProducer(cfg.KafkaBootstrap, false)
+	defer defaultBalancerProducer.Close()
+
+	hashBalancerProducer := kafka.DefaultProducer(cfg.KafkaBootstrap, true)
+	defer hashBalancerProducer.Close()
 
 	r := gin.Default()
 
 	// Swagger
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	handler := api.NewHandler(producer)
+	SimpleMessageHandler := api.SimpleMessageHandle(defaultBalancerProducer)
+	ThreePartitionTopicHashMessageHandler := api.ThreePartitionTopicHashMessageHandle(hashBalancerProducer)
 
 	// ✅ clean routing
-	router.RegisterRoutes(r, handler)
+	router.RegisterRoutes(r, SimpleMessageHandler, ThreePartitionTopicHashMessageHandler)
 
 	log.Printf("🚀 server running on :%s\n", cfg.ServerPort)
 
