@@ -33,7 +33,9 @@ func main() {
 	ThreePartitionTopicHashMessageHandler := api.ThreePartitionTopicHashMessageHandle(hashBalancerProducer)
 
 	// ✅ clean routing
-	router.RegisterRoutes(r, SimpleMessageHandler, ThreePartitionTopicHashMessageHandler)
+	router.RegisterRoutes(r,
+		SimpleMessageHandler,
+		ThreePartitionTopicHashMessageHandler)
 
 	log.Printf("🚀 server running on :%s\n", cfg.ServerPort)
 

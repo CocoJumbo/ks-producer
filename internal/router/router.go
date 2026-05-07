@@ -19,4 +19,5 @@ func RegisterRoutes(r *gin.Engine,
 
 	r.POST("/simple-messages", simpleMessageHandler.SimpleMessage)
 	r.POST("/3-partitions-hash-balanced", threePartitionTopicHashMessageHandler.ThreePartitionTopicHashMessage)
+	r.POST("/3-partitions-round-robin-balanced", simpleMessageHandler.ThreePartitionRoundRobinTopicMessage)
 }

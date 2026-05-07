@@ -31,6 +31,10 @@ func ThreePartitionTopicHashMessageHandle(p kafka.Producer) *ThreePartitionTopic
 	return &ThreePartitionTopicHashMessageHandler{producer: p}
 }
 
+func ThreePartitionTopicRoundRobinHandle(p kafka.Producer) *SimpleMessageHandler {
+	return &SimpleMessageHandler{producer: p}
+}
+
 // @Summary Send simple message
 // @Description Send message to simple Kafka topic
 // @Tags messages
@@ -69,7 +73,7 @@ func (h *SimpleMessageHandler) SimpleMessage(c *gin.Context) {
 }
 
 // @Summary Send hash-based message (3 partitions)
-// @Description Send message to Kafka using hash key for partitioning
+// @Description Send message to Kafka using hash key for partitioning. Messages with the same key → always go to the same partition!
 // @Tags hash-messages
 // @Accept json
 // @Produce json
@@ -97,6 +101,43 @@ func (h *ThreePartitionTopicHashMessageHandler) ThreePartitionTopicHashMessage(c
 	}
 
 	err = h.producer.Produce("hash-balanced-3partition-topic", []byte(req.Key), jsonBytes)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to produce"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "sent"})
+}
+
+// @Summary Send round-robin-based message (3 partitions)
+// @Description Send message to Kafka using hash key for partitioning. Messages with the same key → always go to the same partition!
+// @Tags hash-messages
+// @Accept json
+// @Produce json
+// @Param request body models.SimpleMessage true "Message payload"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /3-partitions-round-robin-balanced [post]
+func (h *SimpleMessageHandler) ThreePartitionRoundRobinTopicMessage(c *gin.Context) {
+	var req models.SimpleMessage
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if req.ID == "" {
+		req.ID = "msg-" + time.Now().Format("20060102150405")
+	}
+
+	jsonBytes, err := json.Marshal(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to serialize"})
+		return
+	}
+
+	err = h.producer.Produce("round-robin-balanced-3partition-topic", []byte(req.Key), jsonBytes)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to produce"})
 		return
